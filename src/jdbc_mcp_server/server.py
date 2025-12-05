@@ -367,17 +367,24 @@ async def get_sample_data(
 
         adapter = adapters[database]
 
-        # Build query based on schema
+        # Safely quote identifiers
+        quoted_table = adapter.quote_identifier(table)
         if schema:
-            full_table_name = f"{schema}.{table}"
+            quoted_schema = adapter.quote_identifier(schema)
+            full_table_name = f"{quoted_schema}.{quoted_table}"
         else:
-            full_table_name = table
+            full_table_name = quoted_table
 
         # Limit to max 100 rows
-        effective_limit = min(limit, 100)
+        effective_limit = max(0, min(int(limit), 100))
 
-        query = f"SELECT * FROM {full_table_name} LIMIT {effective_limit}"
-        rows = await adapter.execute_query(query, None)
+        # Use adapter paramstyle for limit placeholder
+        limit_placeholder = "?"
+        if getattr(adapter, "paramstyle", "format") not in ("qmark",):
+            limit_placeholder = "%s"
+
+        query = f"SELECT * FROM {full_table_name} LIMIT {limit_placeholder}"
+        rows = await adapter.execute_query(query, (effective_limit,))
 
         # Extract columns
         columns = list(rows[0].keys()) if rows else []

@@ -11,7 +11,13 @@ from typing import Any, Dict, List, Optional, Tuple
 import logging
 
 from jdbc_mcp_server.database.base import DatabaseAdapter
-from jdbc_mcp_server.errors import ConnectionError, QueryError, NotFoundError, map_driver_error
+from jdbc_mcp_server.errors import (
+    ConnectionError,
+    QueryError,
+    ValidationError,
+    NotFoundError,
+    map_driver_error,
+)
 from jdbc_mcp_server.utils import serialize_row
 
 logger = logging.getLogger(__name__)
@@ -105,6 +111,16 @@ class SQLiteAdapter(DatabaseAdapter):
         except sqlite3.Error as e:
             logger.error(f"SQLite query error: {e}")
             raise map_driver_error(e, self.driver_type)
+
+    def quote_identifier(self, identifier: str) -> str:
+        """
+        Quote an identifier using SQLite rules (double quotes).
+        """
+        if not isinstance(identifier, str) or not identifier.strip():
+            raise ValidationError("Identifier cannot be empty")
+
+        sanitized = identifier.replace('"', '""')
+        return f'"{sanitized}"'
 
     async def get_tables(self, schema: Optional[str] = None) -> List[str]:
         """List all tables in the SQLite database."""

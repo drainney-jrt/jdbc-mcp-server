@@ -172,6 +172,19 @@ class DatabaseAdapter(ABC):
         """
         pass
 
+    @abstractmethod
+    def quote_identifier(self, identifier: str) -> str:
+        """
+        Safely quote a database identifier (e.g., table or schema name).
+
+        Args:
+            identifier: Identifier to quote
+
+        Returns:
+            Quoted identifier string safe for inclusion in SQL
+        """
+        pass
+
     def _validate_query_safety(self, query: str) -> None:
         """
         Validate query doesn't contain dangerous operations.

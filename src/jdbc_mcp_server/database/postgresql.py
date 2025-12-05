@@ -12,7 +12,13 @@ from typing import Any, Dict, List, Optional, Tuple
 import logging
 
 from jdbc_mcp_server.database.base import DatabaseAdapter
-from jdbc_mcp_server.errors import ConnectionError, QueryError, NotFoundError, map_driver_error
+from jdbc_mcp_server.errors import (
+    ConnectionError,
+    QueryError,
+    ValidationError,
+    NotFoundError,
+    map_driver_error,
+)
 from jdbc_mcp_server.utils import serialize_row
 
 logger = logging.getLogger(__name__)
@@ -40,7 +46,8 @@ class PostgreSQLAdapter(DatabaseAdapter):
         """Initialize PostgreSQL connection pool."""
         try:
             logger.info(f"Creating PostgreSQL connection pool (size: {self.pool_size})")
-            self._pool = psycopg2.pool.SimpleConnectionPool(
+            self._pool = await asyncio.to_thread(
+                psycopg2.pool.SimpleConnectionPool,
                 minconn=1,
                 maxconn=self.pool_size,
                 dsn=self.connection_string
@@ -54,7 +61,7 @@ class PostgreSQLAdapter(DatabaseAdapter):
         """Close PostgreSQL connection pool."""
         if self._pool:
             logger.info("Closing PostgreSQL connection pool")
-            self._pool.closeall()
+            await asyncio.to_thread(self._pool.closeall)
             self._pool = None
 
     @asynccontextmanager
@@ -117,6 +124,16 @@ class PostgreSQLAdapter(DatabaseAdapter):
         except psycopg2.Error as e:
             logger.error(f"PostgreSQL query error: {e}")
             raise map_driver_error(e, self.driver_type)
+
+    def quote_identifier(self, identifier: str) -> str:
+        """
+        Quote an identifier using PostgreSQL rules (double quotes).
+        """
+        if not isinstance(identifier, str) or not identifier.strip():
+            raise ValidationError("Identifier cannot be empty")
+
+        sanitized = identifier.replace('"', '""')
+        return f'"{sanitized}"'
 
     async def get_tables(self, schema: Optional[str] = None) -> List[str]:
         """List all tables in the PostgreSQL database or specific schema."""

@@ -52,6 +52,17 @@ Complete guide for Windsurf IDE integration:
 
 **Use this** if you're using Windsurf IDE with Cascade.
 
+### 🔧 [MAINTENANCE.md](MAINTENANCE.md)
+Guide for keeping the server updated:
+- Dependency update schedule
+- Database driver maintenance
+- Testing strategy
+- Automated updates with Dependabot
+- Security patch process
+- Troubleshooting updates
+
+**Reference this** for ongoing maintenance and updates.
+
 ## Quick Links
 
 - [Main README](../README.md) - Project overview and quick start
@@ -95,7 +106,8 @@ docs/
 ├── USAGE.md           # Complete usage guide
 ├── CONFIGURATION.md   # Database configuration examples
 ├── EXAMPLES.md        # Practical examples
-└── WINDSURF.md        # Windsurf IDE integration guide
+├── WINDSURF.md        # Windsurf IDE integration guide
+└── MAINTENANCE.md     # Maintenance and update guide
 ```
 
 ## Need Help?
