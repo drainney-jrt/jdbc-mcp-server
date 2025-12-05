@@ -41,6 +41,17 @@ Practical examples and common use cases:
 
 **Reference this** for inspiration and patterns.
 
+### 🌊 [WINDSURF.md](WINDSURF.md)
+Complete guide for Windsurf IDE integration:
+- Windsurf IDE and Cascade setup
+- Configuration for multiple databases
+- Advanced Cascade workflows
+- Code-database integration examples
+- Best practices for Windsurf users
+- Troubleshooting Windsurf-specific issues
+
+**Use this** if you're using Windsurf IDE with Cascade.
+
 ## Quick Links
 
 - [Main README](../README.md) - Project overview and quick start
@@ -83,7 +94,8 @@ docs/
 ├── README.md           # This file - documentation index
 ├── USAGE.md           # Complete usage guide
 ├── CONFIGURATION.md   # Database configuration examples
-└── EXAMPLES.md        # Practical examples
+├── EXAMPLES.md        # Practical examples
+└── WINDSURF.md        # Windsurf IDE integration guide
 ```
 
 ## Need Help?

@@ -1,6 +1,6 @@
 # JDBC MCP Server
 
-A Model Context Protocol (MCP) server that provides database connectivity to Claude Code. Supports PostgreSQL, MySQL, SQLite, and DB2 iSeries databases through native Python drivers.
+A Model Context Protocol (MCP) server that provides database connectivity to Claude Code, Claude Desktop, and Windsurf IDE. Supports PostgreSQL, MySQL, SQLite, and DB2 iSeries databases through native Python drivers.
 
 ## Features
 

@@ -1,6 +1,6 @@
 # JDBC MCP Server Usage Guide
 
-This guide provides detailed instructions for using the JDBC MCP Server with Claude Code and Claude Desktop.
+This guide provides detailed instructions for using the JDBC MCP Server with Claude Code, Claude Desktop, and Windsurf IDE.
 
 ## Table of Contents
 
@@ -9,6 +9,7 @@ This guide provides detailed instructions for using the JDBC MCP Server with Cla
 - [Configuration](#configuration)
 - [Using with Claude Code](#using-with-claude-code)
 - [Using with Claude Desktop](#using-with-claude-desktop)
+- [Using with Windsurf IDE](#using-with-windsurf-ide)
 - [Available Tools](#available-tools)
 - [Troubleshooting](#troubleshooting)
 
@@ -123,6 +124,124 @@ Add to your Claude Desktop configuration file:
   }
 }
 ```
+
+## Using with Windsurf IDE
+
+Windsurf IDE (by Codeium) supports MCP servers through its Cascade AI assistant. Configure the JDBC MCP Server in Windsurf:
+
+### Configuration Location
+
+**macOS/Linux**: `~/.codeium/windsurf/mcp_config.json`
+**Windows**: `%USERPROFILE%\.codeium\windsurf\mcp_config.json`
+
+### Configuration Format
+
+```json
+{
+  "mcpServers": {
+    "database": {
+      "command": "python",
+      "args": ["-m", "jdbc_mcp_server"],
+      "env": {
+        "DB_PROD_TYPE": "postgresql",
+        "DB_PROD_HOST": "localhost",
+        "DB_PROD_PORT": "5432",
+        "DB_PROD_DATABASE": "myapp",
+        "DB_PROD_USERNAME": "readonly_user",
+        "DB_PROD_PASSWORD": "secure_password",
+        "DB_PROD_READ_ONLY": "true",
+        "DB_PROD_POOL_SIZE": "10"
+      }
+    }
+  }
+}
+```
+
+### Multiple Databases Example
+
+```json
+{
+  "mcpServers": {
+    "database": {
+      "command": "python",
+      "args": ["-m", "jdbc_mcp_server"],
+      "env": {
+        "DB_PROD_TYPE": "postgresql",
+        "DB_PROD_CONNECTION_STRING": "postgresql://readonly@prod-server:5432/production",
+        "DB_PROD_READ_ONLY": "true",
+
+        "DB_DEV_TYPE": "mysql",
+        "DB_DEV_HOST": "localhost",
+        "DB_DEV_PORT": "3306",
+        "DB_DEV_DATABASE": "dev_db",
+        "DB_DEV_USERNAME": "dev_user",
+        "DB_DEV_PASSWORD": "dev_pass",
+        "DB_DEV_READ_ONLY": "false",
+
+        "DB_CACHE_TYPE": "sqlite",
+        "DB_CACHE_PATH": "/Users/yourusername/data/cache.db",
+        "DB_CACHE_READ_ONLY": "false"
+      }
+    }
+  }
+}
+```
+
+### Using in Windsurf
+
+After configuration:
+
+1. **Restart Windsurf IDE** to load the MCP server
+2. **Open Cascade** (AI assistant panel)
+3. **Verify connection**: The database tools should appear in Cascade's available tools
+4. **Start querying**: Ask Cascade to explore your databases!
+
+### Example Windsurf Cascade Prompts
+
+```
+"List all databases available"
+"Show me the schema of the users table in the prod database"
+"Find all orders from the last week in the prod database"
+"Compare the users table structure between prod and dev databases"
+"Generate a SQL query to find inactive users and explain what it does"
+```
+
+### Windsurf-Specific Features
+
+**Code Context Integration**: Windsurf can correlate database schema with your application code:
+- "Show me where the users table is referenced in this codebase"
+- "Find all SQL queries that use the orders table"
+- "Check if my User model matches the database schema"
+
+**Multi-file Edits**: Cascade can update multiple files based on database insights:
+- "Update all models to match the current database schema"
+- "Add validation to match the database constraints"
+- "Generate TypeScript types from the database schema"
+
+**Interactive Debugging**: Use database tools while debugging:
+- "Check what data is actually in the database for user ID 123"
+- "Compare expected vs actual data for this failed test"
+- "Show me recent database changes that might affect this code"
+
+### Troubleshooting Windsurf
+
+**MCP Server not appearing:**
+1. Check configuration file location and syntax (must be valid JSON)
+2. Restart Windsurf completely (not just reload window)
+3. Check Windsurf logs: View → Output → Select "MCP" from dropdown
+4. Verify Python and dependencies are accessible from Windsurf's environment
+
+**Connection errors:**
+1. Test connection manually: `python -m jdbc_mcp_server` with same env vars
+2. Check database server is accessible from Windsurf's context
+3. Verify firewall/network settings
+4. Review environment variables are correctly set
+
+**Tools not working:**
+1. Ensure MCP server started successfully (check Windsurf output panel)
+2. Verify database credentials are correct
+3. Test with simple query first: "List all databases"
+4. Check read-only mode if getting permission errors
 
 ## Available Tools
 
